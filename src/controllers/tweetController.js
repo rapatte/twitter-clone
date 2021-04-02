@@ -18,7 +18,7 @@ exports.findUserTweets = (request, response) => {
         if (error) {
             response.send(error.message)
         }
-        // console.log(tweets);
+        console.log(tweetsList);
         response.render("userTweets.ejs", { tweetsList })
         // console.log(tweetsList);
     })
@@ -61,11 +61,11 @@ exports.changeOne = (request, response) => {
 
 exports.delete = (request, response) => {
     let {id} = request.params;
-    let {tweetsid} = request.params;
-    Tweet.removeone(tweetsid, request.body, (error, result) => {
+    
+    Tweet.removeone(id, (error, result) => {
         if (error) {
             response.send(error.message);
         }
-        response.redirect(`/user/${id}`);
+        response.redirect(`/`);
     })
 }

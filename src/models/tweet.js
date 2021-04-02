@@ -53,12 +53,15 @@ exports.putText = (tweetsid, new_value, callback) => {
     })
 }
 
-exports.removeone = (tweetsid, callback) => {
-    db.query(`DELETE FROM tweets WHERE tweets.id = ${tweetsid};`, (error, result) => {
+exports.removeone = (id, callback) => {
+    const query = `DELETE FROM tweets WHERE id = ${id};`
+    // console.log(query);
+    db.query(`DELETE FROM tweets WHERE id = ${id};`, (error, result) => {
         if (error) {
             console.log("error: ", error);
             return;
         }
         callback(null, result);
+        // console.log(result);
     })
 }

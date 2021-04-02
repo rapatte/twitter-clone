@@ -10,7 +10,6 @@
 </head>
 
 <body>
-    <p>Connecté en tant que <%= user.username %></p>
     <div class="comments">
         <div class="comments-comment">
             <a href="/user/<%= tweetDetails[0].id_user %>"><img src="/images/user.png" alt="userimage"></a>
@@ -43,11 +42,12 @@
         <div class="tweet-container-button">
             <button type="submit" class="tweet-button">Modifier ce tweet</button>
         </div>
-        <form action="/users/<%= id %>/tweet/<%= tweetsid %>/delete" method="POST" class="tweet-container-form">
-            <div class="tweet-container-button">
-                <button type="submit" class="tweet-button">Supprimer ce tweet</button>
-            </div>
-        </form>
+        
+    </form>
+    <form action="/users/tweetDetails/<%= tweetsid %>" method="POST" class="tweet-container-form">
+        <div class="tweet-container-button">
+            <button type="submit" class="tweet-button">Supprimer ce tweet</button>
+        </div>
     </form>
     
 </body>

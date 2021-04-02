@@ -5,22 +5,27 @@ const jwt = require ("jsonwebtoken")
 const SECRET = "pouetpouet";
 const MAXAGE = Math.floor(Date.now() / 1000) + (60 * 60);
 
-exports.signup = (request, response) => {
-    response.render("signup.ejs");
+exports.signup = async (request, response) => {
+    const alerts_warning = await request.consumeFlash('warning')
+    response.render("signup.ejs", { alerts_warning });
 }
 
-exports.login = (request, response) => {
-    response.render("login.ejs");
+exports.login = async (request, response) => {
+    const alerts_warning = await request.consumeFlash('warning')
+    response.render("login.ejs", { alerts_warning });
+    // console.log(alerts_warning);
 }
 
 exports.newAccount = (request, response) => {
     const { first_name, last_name, birth_date, username, mail, password, phone, city } = request.body;
 
-    User.getByUsername (username, (error, result) => {
+    User.getByUsername (username, async (error, result) => {
         if (error) {
             response.send(error.message)
         } else if (result.length !== 0) {
-            response.send("Ce nom d'utilisateur existe déjà")
+            await request.flash('warning', "Ce nom d'utilisateur existe déjà.")
+            response.redirect('/signup')
+            console.log(result.username);
         } else {
             const saltRounds = 10;
             bcrypt.hash(password, saltRounds, (error, hash) => {
@@ -50,21 +55,23 @@ exports.newAccount = (request, response) => {
     })
 }
 
-exports.authenticate = (request, response) => {
+exports.authenticate = async (request, response) => {
     const { username, password } = request.body;
 
-    User.getByUsername(username, (error, result) => {
+    User.getByUsername(username, async (error, result) => {
         if (error) {
             response.send(error.message)
         } else if (result.length === 0) {
-            response.send("Cet utilisateur n'existe pas")
+            await request.flash('warning', "Cet utilisateur n'existe pas.")
+            response.redirect("/login")
         } else {
             const hash = result[0].password;
-            bcrypt.compare(password, hash, (error, correct) => {
+            bcrypt.compare(password, hash, async (error, correct) => {
                 if (error) {
                     response.send(error.message)
                 } else if (!correct) {
-                    response.send('Mot de passe incorrect')
+                    await request.flash('warning', "Mot de passe incorrect.")
+                    response.redirect('/login')
                 } else {
                     const user = {
                         first_name: result[0].first_name,
@@ -85,4 +92,9 @@ exports.authenticate = (request, response) => {
             });
         }
     });
+}
+
+exports.logout = (request, response) => {
+    response.clearCookie("authcookie");
+    response.redirect("/")
 }

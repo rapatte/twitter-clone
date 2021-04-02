@@ -2,8 +2,19 @@ const express = require('express');
 const ejs = require('ejs');
 const router = require('./routers');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const { flash } = require('express-flash-message');
 
 const server = express();
+
+server.use(session({
+    secret: 'pouetpouet',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}))
+
+server.use(flash({ sessionKeyName: 'flashMessage' }))
 
 server.engine('ejs', ejs.renderFile);
 server.set('views', './src/views');
